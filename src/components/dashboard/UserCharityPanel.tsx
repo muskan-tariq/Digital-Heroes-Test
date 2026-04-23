@@ -3,6 +3,13 @@ import { useAuthStore } from '../../store/authStore'
 import { supabase, type Charity } from '../../lib/supabase'
 import { Heart, Search, Loader, CheckCircle } from 'lucide-react'
 
+const PLACEHOLDER_CHARITIES: Charity[] = [
+  { id: '1', name: 'Cancer Research UK', description: 'We are the largest independent cancer research organisation in the UK...', image_url: null, website_url: 'https://www.cancerresearchuk.org', created_at: '' },
+  { id: '2', name: 'Mind', description: 'We provide advice and support to empower anyone experiencing a mental health problem...', image_url: null, website_url: 'https://www.mind.org.uk', created_at: '' },
+  { id: '3', name: 'St Giles Hospice', description: 'Providing outstanding free-of-charge palliative and end-of-life care...', image_url: null, website_url: 'https://www.stgileshospice.com', created_at: '' },
+  { id: '4', name: 'Age UK', description: 'We are the country\'s largest charity dedicated to helping everyone make the most of later life...', image_url: null, website_url: 'https://www.ageuk.org.uk', created_at: '' },
+]
+
 export default function UserCharityPanel() {
   const { profile, fetchProfile, user } = useAuthStore()
   const [charities, setCharities] = useState<Charity[]>([])
@@ -20,7 +27,11 @@ export default function UserCharityPanel() {
     setSelected(profile?.charity_id ?? null)
     setPercentage(profile?.charity_percentage ?? 10)
     supabase.from('charities').select('*').order('name').then(({ data }) => {
-      setCharities(data ?? [])
+      if (data && data.length > 0) {
+        setCharities(data)
+      } else {
+        setCharities(PLACEHOLDER_CHARITIES)
+      }
       setLoading(false)
     })
   }, [profile])
