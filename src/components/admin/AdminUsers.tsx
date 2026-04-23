@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase, type Profile, type Score } from '../../lib/supabase'
-import { Search, Loader, Edit3, Shield, X, Save, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { Search, Loader, Edit3, Shield, X, Save, Trash2, Plus } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function AdminUsers() {
@@ -9,7 +9,6 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true)
   const [editUser, setEditUser] = useState<Profile | null>(null)
   const [editScores, setEditScores] = useState<Score[]>([])
-  const [expandedUser, setExpandedUser] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [newScore, setNewScore] = useState({ date: format(new Date(), 'yyyy-MM-dd'), score: '' })
   const [msg, setMsg] = useState('')

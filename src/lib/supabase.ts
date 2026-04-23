@@ -34,6 +34,8 @@ export interface Charity {
   description: string
   image_url: string | null
   website_url: string | null
+  is_featured?: boolean
+  upcoming_events?: string
   created_at: string
 }
 

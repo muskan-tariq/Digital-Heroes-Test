@@ -245,7 +245,7 @@ export default function HomePage() {
                     { name: 'Mind', amount: '£1,800', color: 'var(--color-secondary)' },
                     { name: "St Giles Hospice", amount: '£3,100', color: 'var(--color-accent)' },
                     { name: 'Age UK', amount: '£1,200', color: 'var(--color-gold)' },
-                  ].map((charity, i) => (
+                  ].map((charity) => (
                     <div key={charity.name} className="card card-hover" style={{ padding: 'var(--space-lg)' }}>
                       <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: charity.color, opacity: 0.7, marginBottom: 10 }} />
                       <div style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: 4 }}>{charity.name}</div>

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Bell, X, Check, Trophy, Zap, CreditCard, Info } from 'lucide-react'
+import { Bell, Check, Trophy, Zap, CreditCard, Info } from 'lucide-react'
 import { useNotificationStore, type AppNotification } from '../../store/notificationStore'
 import { formatDistanceToNow } from 'date-fns'
 

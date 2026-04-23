@@ -9,7 +9,6 @@ export default function AdminDraws() {
   const [activeSubscribers, setActiveSubscribers] = useState<Profile[]>([])
   const [userScores, setUserScores] = useState<Record<string, number[]>>({})
   const [draws, setDraws] = useState<Draw[]>([])
-  const [loading, setLoading] = useState(true)
   const [simulating, setSimulating] = useState(false)
   const [publishing, setPublishing] = useState(false)
   
@@ -51,8 +50,6 @@ export default function AdminDraws() {
       setDraws(drawList ?? [])
     } catch (e) {
       console.error('AdminDraws fetchData error:', e)
-    } finally {
-      setLoading(false)
     }
   }
 
