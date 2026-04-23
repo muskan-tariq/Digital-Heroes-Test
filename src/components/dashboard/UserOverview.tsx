@@ -24,7 +24,21 @@ export default function UserOverview() {
     // Fetch charity
     if (profile.charity_id) {
       supabase.from('charities').select('*').eq('id', profile.charity_id).single()
-        .then(({ data }) => setCharity(data))
+        .then(({ data }) => {
+          if (data) {
+            setCharity(data)
+          } else {
+            // Fallback for placeholders
+            const PLACEHOLDER_CHARITIES: Charity[] = [
+              { id: '1', name: 'Cancer Research UK', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: '2', name: 'Mind', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: '3', name: 'St Giles Hospice', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: '4', name: 'Age UK', description: '', image_url: null, website_url: null, created_at: '' },
+            ]
+            const placeholder = PLACEHOLDER_CHARITIES.find(c => c.id === profile.charity_id)
+            if (placeholder) setCharity(placeholder)
+          }
+        })
     }
 
     // Fetch latest published draw
