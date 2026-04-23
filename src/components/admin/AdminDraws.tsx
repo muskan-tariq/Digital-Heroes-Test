@@ -57,8 +57,9 @@ export default function AdminDraws() {
     fetchData()
   }, [])
 
-  const runSimulation = () => {
+  const runSimulation = async () => {
     setSimulating(true)
+    await fetchData() // Always get fresh scores before simulating
     
     // 1. Generate Winning Numbers
     let winningNumbers: number[] = []
@@ -125,7 +126,8 @@ export default function AdminDraws() {
   const publishDraw = async () => {
     if (!simResults) return
     setPublishing(true)
-
+    await fetchData() // Final refresh before permanent record
+    
     try {
       // Check if draw for this month already exists
       const { data: existing } = await supabase.from('draws').select('*').eq('month', currentMonth).single()
@@ -198,7 +200,12 @@ export default function AdminDraws() {
       <div className="grid-2" style={{ gap: 'var(--space-xl)' }}>
         {/* Configuration */}
         <div className="card">
-          <h2 className="heading-sm" style={{ marginBottom: 'var(--space-lg)' }}>Configuration</h2>
+          <div className="flex-between" style={{ marginBottom: 'var(--space-lg)' }}>
+            <h2 className="heading-sm">Configuration</h2>
+            <button onClick={fetchData} className="btn btn-ghost btn-sm" style={{ gap: 6 }}>
+              <RefreshCcw size={14} /> Refresh Data
+            </button>
+          </div>
           
           <div className="form-group" style={{ marginBottom: 'var(--space-md)' }}>
             <label className="form-label">Draw Period</label>
