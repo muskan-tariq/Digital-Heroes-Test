@@ -4,10 +4,10 @@ import { supabase, type Charity } from '../../lib/supabase'
 import { Heart, Search, Loader, CheckCircle } from 'lucide-react'
 
 const PLACEHOLDER_CHARITIES: Charity[] = [
-  { id: '1', name: 'Cancer Research UK', description: 'We are the largest independent cancer research organisation in the UK...', image_url: null, website_url: 'https://www.cancerresearchuk.org', created_at: '' },
-  { id: '2', name: 'Mind', description: 'We provide advice and support to empower anyone experiencing a mental health problem...', image_url: null, website_url: 'https://www.mind.org.uk', created_at: '' },
-  { id: '3', name: 'St Giles Hospice', description: 'Providing outstanding free-of-charge palliative and end-of-life care...', image_url: null, website_url: 'https://www.stgileshospice.com', created_at: '' },
-  { id: '4', name: 'Age UK', description: 'We are the country\'s largest charity dedicated to helping everyone make the most of later life...', image_url: null, website_url: 'https://www.ageuk.org.uk', created_at: '' },
+  { id: '70868f63-0490-4824-b152-7a0914440c24', name: 'Cancer Research UK', description: 'We are the largest independent cancer research organisation in the UK...', image_url: null, website_url: 'https://www.cancerresearchuk.org', created_at: '' },
+  { id: 'b2d3e91b-6902-45d2-a7d1-e6e73f9154a1', name: 'Mind', description: 'We provide advice and support to empower anyone experiencing a mental health problem...', image_url: null, website_url: 'https://www.mind.org.uk', created_at: '' },
+  { id: 'c5e3f1a2-b9d8-4f7c-a6e1-d5b2c9a8f3e4', name: 'St Giles Hospice', description: 'Providing outstanding free-of-charge palliative and end-of-life care...', image_url: null, website_url: 'https://www.stgileshospice.com', created_at: '' },
+  { id: 'a1b2c3d4-e5f6-4a5b-b6c7-d8e9f0a1b2c3', name: 'Age UK', description: 'We are the country\'s largest charity dedicated to helping everyone make the most of later life...', image_url: null, website_url: 'https://www.ageuk.org.uk', created_at: '' },
 ]
 
 export default function UserCharityPanel() {

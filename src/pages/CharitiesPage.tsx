@@ -5,12 +5,12 @@ import { useAuthStore } from '../store/authStore'
 import { Heart, Search, ExternalLink, Globe, ArrowLeft, Loader } from 'lucide-react'
 
 const PLACEHOLDER_CHARITIES: Charity[] = [
-  { id: '1', name: 'Cancer Research UK', description: 'We are the largest independent cancer research organisation in the UK, supporting research to understand, prevent, diagnose and treat cancer.', image_url: null, website_url: 'https://www.cancerresearchuk.org', created_at: '' },
-  { id: '2', name: 'Mind', description: 'We provide advice and support to empower anyone experiencing a mental health problem, campaigning to improve services, and reduce stigma.', image_url: null, website_url: 'https://www.mind.org.uk', created_at: '' },
-  { id: '3', name: "St Giles Hospice", description: 'Providing outstanding free-of-charge palliative and end-of-life care, support and education for local communities across Staffordshire.', image_url: null, website_url: 'https://www.stgileshospice.com', created_at: '' },
-  { id: '4', name: 'Age UK', description: 'We are the country\'s largest charity dedicated to helping everyone make the most of later life, regardless of their age.', image_url: null, website_url: 'https://www.ageuk.org.uk', created_at: '' },
-  { id: '5', name: 'British Heart Foundation', description: 'Funding lifesaving research into heart and circulatory diseases, and providing information and support to those affected.', image_url: null, website_url: 'https://www.bhf.org.uk', created_at: '' },
-  { id: '6', name: 'Great Ormond Street Hospital Charity', description: 'Working to ensure children from around the world can access the best care at Great Ormond Street Hospital.', image_url: null, website_url: 'https://www.gosh.org', created_at: '' },
+  { id: '70868f63-0490-4824-b152-7a0914440c24', name: 'Cancer Research UK', description: 'We are the largest independent cancer research organisation in the UK, supporting research to understand, prevent, diagnose and treat cancer.', image_url: null, website_url: 'https://www.cancerresearchuk.org', created_at: '' },
+  { id: 'b2d3e91b-6902-45d2-a7d1-e6e73f9154a1', name: 'Mind', description: 'We provide advice and support to empower anyone experiencing a mental health problem, campaigning to improve services, and reduce stigma.', image_url: null, website_url: 'https://www.mind.org.uk', created_at: '' },
+  { id: 'c5e3f1a2-b9d8-4f7c-a6e1-d5b2c9a8f3e4', name: "St Giles Hospice", description: 'Providing outstanding free-of-charge palliative and end-of-life care, support and education for local communities across Staffordshire.', image_url: null, website_url: 'https://www.stgileshospice.com', created_at: '' },
+  { id: 'a1b2c3d4-e5f6-4a5b-b6c7-d8e9f0a1b2c3', name: 'Age UK', description: 'We are the country\'s largest charity dedicated to helping everyone make the most of later life, regardless of their age.', image_url: null, website_url: 'https://www.ageuk.org.uk', created_at: '' },
+  { id: '5f9a2b7c-3d4e-4b6f-8a9b-c0d1e2f3a4b5', name: 'British Heart Foundation', description: 'Funding lifesaving research into heart and circulatory diseases, and providing information and support to those affected.', image_url: null, website_url: 'https://www.bhf.org.uk', created_at: '' },
+  { id: '6a7b8c9d-0e1f-4a2b-3c4d-5e6f7a8b9c0d', name: 'Great Ormond Street Hospital Charity', description: 'Working to ensure children from around the world can access the best care at Great Ormond Street Hospital.', image_url: null, website_url: 'https://www.gosh.org', created_at: '' },
 ]
 
 const COLOR_PALETTE = ['#6558f5', '#00e5a0', '#ff6b6b', '#ffd700', '#7c3aed', '#0ea5e9']

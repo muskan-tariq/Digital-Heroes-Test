@@ -30,10 +30,10 @@ export default function UserOverview() {
           } else {
             // Fallback for placeholders
             const PLACEHOLDER_CHARITIES: Charity[] = [
-              { id: '1', name: 'Cancer Research UK', description: '', image_url: null, website_url: null, created_at: '' },
-              { id: '2', name: 'Mind', description: '', image_url: null, website_url: null, created_at: '' },
-              { id: '3', name: 'St Giles Hospice', description: '', image_url: null, website_url: null, created_at: '' },
-              { id: '4', name: 'Age UK', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: '70868f63-0490-4824-b152-7a0914440c24', name: 'Cancer Research UK', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: 'b2d3e91b-6902-45d2-a7d1-e6e73f9154a1', name: 'Mind', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: 'c5e3f1a2-b9d8-4f7c-a6e1-d5b2c9a8f3e4', name: 'St Giles Hospice', description: '', image_url: null, website_url: null, created_at: '' },
+              { id: 'a1b2c3d4-e5f6-4a5b-b6c7-d8e9f0a1b2c3', name: 'Age UK', description: '', image_url: null, website_url: null, created_at: '' },
             ]
             const placeholder = PLACEHOLDER_CHARITIES.find(c => c.id === profile.charity_id)
             if (placeholder) setCharity(placeholder)
