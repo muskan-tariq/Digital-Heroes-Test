@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase, type Verification, type Profile, type Draw } from '../../lib/supabase'
-import { Loader, CheckCircle, XCircle, ExternalLink, Image as ImageIcon } from 'lucide-react'
+import { Loader, CheckCircle, XCircle, ExternalLink, Image as ImageIcon, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function AdminWinners() {
@@ -29,6 +29,16 @@ export default function AdminWinners() {
   const updateStatus = async (id: string, status: string) => {
     setUpdating(id)
     const { error } = await supabase.from('verifications').update({ status }).eq('id', id)
+    if (!error) {
+      await fetchVerifications()
+    }
+    setUpdating(null)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this verification record?')) return
+    setUpdating(id)
+    const { error } = await supabase.from('verifications').delete().eq('id', id)
     if (!error) {
       await fetchVerifications()
     }
@@ -119,6 +129,12 @@ export default function AdminWinners() {
                               Mark as Paid
                           </button>
                         )}
+                        <button 
+                          onClick={() => handleDelete(v.id)}
+                          disabled={!!updating}
+                          className="btn btn-ghost btn-sm" title="Delete Record">
+                          <Trash2 size={14} color="var(--color-accent)" />
+                        </button>
                       </div>
                     </td>
                   </tr>
