@@ -1,5 +1,5 @@
 import { useNotificationStore } from '../../store/notificationStore'
-import { Mail, User, Clock, ArrowRight } from 'lucide-react'
+import { Mail, User, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function AdminEmails() {
