@@ -84,8 +84,8 @@ export default function UserOverview() {
         <p>{profile?.email}</p>
       </div>
 
-      {/* Subscription Lapsed Alert (Only for previously active users) */}
-      {(profile?.sub_status === 'inactive' || profile?.sub_status === 'past_due' || profile?.sub_status === 'canceled') && (
+      {/* Subscription Lapsed Alert (Only for users who had a plan and it failed/was canceled) */}
+      {(profile?.sub_status === 'past_due' || profile?.sub_status === 'canceled') && (
         <div className="alert alert-error" style={{ marginBottom: 'var(--space-2xl)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <AlertCircle size={24} />
