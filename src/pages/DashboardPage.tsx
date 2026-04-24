@@ -1,6 +1,6 @@
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { Heart, LayoutDashboard, Target, Users, Menu, X, LogOut, ChevronRight } from 'lucide-react'
+import { Heart, LayoutDashboard, Target, Menu, X, LogOut, ChevronRight } from 'lucide-react'
 import NotificationBell from '../components/common/NotificationBell'
 
 // Sub-pages
