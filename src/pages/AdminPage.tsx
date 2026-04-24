@@ -1,6 +1,6 @@
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { Heart, Users, ShieldCheck, LayoutDashboard, Menu, X, LogOut, ChevronRight, BarChart2 } from 'lucide-react'
+import { Heart, Users, ShieldCheck, LayoutDashboard, Menu, X, LogOut, ChevronRight, BarChart2, Mail } from 'lucide-react'
 import NotificationBell from '../components/common/NotificationBell'
 
 // Admin Sub-pages
@@ -9,6 +9,7 @@ import AdminDraws from '../components/admin/AdminDraws'
 import AdminCharities from '../components/admin/AdminCharities'
 import AdminWinners from '../components/admin/AdminWinners'
 import AdminAnalytics from '../components/admin/AdminAnalytics'
+import AdminEmails from '../components/admin/AdminEmails'
 
 interface AdminPageProps {
   sidebarOpen: boolean
@@ -21,6 +22,7 @@ const ADMIN_NAV = [
   { path: '/admin/draws', label: 'Draw Engine', icon: <span style={{ fontSize: '1rem' }}>🎲</span> },
   { path: '/admin/charities', label: 'Charities', icon: <Heart size={18} /> },
   { path: '/admin/winners', label: 'Winners', icon: <ShieldCheck size={18} /> },
+  { path: '/admin/emails', label: 'Emails', icon: <Mail size={18} /> },
   { path: '/admin/analytics', label: 'Analytics', icon: <BarChart2 size={18} /> },
 ]
 
@@ -107,6 +109,7 @@ export default function AdminPage({ sidebarOpen, setSidebarOpen }: AdminPageProp
             <Route path="/draws" element={<AdminDraws />} />
             <Route path="/charities" element={<AdminCharities />} />
             <Route path="/winners" element={<AdminWinners />} />
+            <Route path="/emails" element={<AdminEmails />} />
             <Route path="/analytics" element={<AdminAnalytics />} />
           </Routes>
         </main>

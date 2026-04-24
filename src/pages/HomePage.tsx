@@ -4,12 +4,7 @@ import { useAuthStore } from '../store/authStore'
 import { supabase, type Charity } from '../lib/supabase'
 import { Heart, Zap, Trophy, ChevronRight, Star, Users, ArrowRight, Shield, TrendingUp } from 'lucide-react'
 
-const STATS = [
-  { value: '£12,400', label: 'Donated to Charities' },
-  { value: '3,241', label: 'Active Players' },
-  { value: '£48,200', label: 'Prize Pool Distributed' },
-  { value: '47', label: 'Partner Charities' },
-]
+
 
 const HOW_IT_WORKS = [
   {
@@ -41,21 +36,43 @@ const PRIZES = [
 export default function HomePage() {
   const { user } = useAuthStore()
   const [featuredCharities, setFeaturedCharities] = useState<Charity[]>([])
+  const [recentWinners, setRecentWinners] = useState<any[]>([])
+  const [stats, setStats] = useState({ charityTotal: 0, activeUsers: 0, prizeTotal: 0, charityCount: 0 })
 
   useEffect(() => {
-    const fetchFeatured = async () => {
-      // First try to get explicitly featured charities
-      let { data } = await supabase.from('charities').select('*').eq('is_featured', true).limit(4)
-      
-      // Fallback: just get the first 4 if none are marked featured
-      if (!data || data.length === 0) {
-        const { data: fallbackData } = await supabase.from('charities').select('*').limit(4)
-        data = fallbackData
+    const fetchData = async () => {
+      // 1. Featured Charities
+      let { data: chars } = await supabase.from('charities').select('*').eq('is_featured', true).limit(4)
+      if (!chars || chars.length === 0) {
+        const { data: fallback } = await supabase.from('charities').select('*').limit(4)
+        chars = fallback
       }
-      
-      if (data) setFeaturedCharities(data)
+      if (chars) setFeaturedCharities(chars)
+
+      // 2. Recent Winners
+      const { data: winData } = await supabase
+        .from('user_draws')
+        .select('winnings, profiles(email, full_name), draws(month)')
+        .gt('winnings', 0)
+        .order('created_at', { ascending: false })
+        .limit(3)
+      if (winData) setRecentWinners(winData)
+
+      // 3. Platform Stats
+      const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+      const { count: cCount } = await supabase.from('charities').select('*', { count: 'exact', head: true })
+      const { data: drawData } = await supabase.from('draws').select('total_pool')
+      const pTotal = (drawData ?? []).reduce((sum, d) => sum + (d.total_pool || 0), 0)
+
+      setStats({
+        charityTotal: pTotal * 0.1,
+        activeUsers: uCount || 0,
+        prizeTotal: pTotal,
+        charityCount: cCount || 0
+      })
     }
-    fetchFeatured()
+
+    fetchData()
   }, [])
 
   const COLOR_PALETTE = ['var(--color-primary)', 'var(--color-secondary)', 'var(--color-accent)', 'var(--color-gold)']
@@ -130,7 +147,12 @@ export default function HomePage() {
       <section style={{ padding: 'var(--space-2xl) 0', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.02)' }}>
         <div className="container">
           <div className="grid-4" style={{ textAlign: 'center' }}>
-            {STATS.map(stat => (
+            {[
+              { label: 'Donated to Charities', value: `£${stats.charityTotal.toLocaleString()}` },
+              { label: 'Active Players', value: stats.activeUsers.toLocaleString() },
+              { label: 'Prize Pool Distributed', value: `£${stats.prizeTotal.toLocaleString()}` },
+              { label: 'Partner Charities', value: stats.charityCount.toString() },
+            ].map(stat => (
               <div key={stat.label} className="animate-fade-in">
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 900 }} className="text-gradient">
                   {stat.value}
@@ -202,6 +224,36 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+
+          {/* Real Recent Winners */}
+          {recentWinners.length > 0 && (
+            <div style={{ marginTop: 'var(--space-4xl)' }}>
+              <div style={{ textAlign: 'center', marginBottom: 'var(--space-xl)' }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>RECENTLY PAID OUT</p>
+              </div>
+              <div className="grid-3" style={{ gap: 'var(--space-lg)' }}>
+                {recentWinners.map((w, i) => (
+                  <div key={i} className="flex-between" style={{ 
+                    padding: '16px 20px', background: 'rgba(255,255,255,0.03)', 
+                    borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' 
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div className="avatar" style={{ width: 36, height: 36, fontSize: '0.8rem' }}>
+                        {w.profiles?.full_name?.slice(0,1) || w.profiles?.email?.slice(0,1).toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                          {w.profiles?.full_name || w.profiles?.email?.split('@')[0]}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{w.draws?.month} winner</div>
+                      </div>
+                    </div>
+                    <div className="text-gold" style={{ fontWeight: 800 }}>£{w.winnings.toFixed(2)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

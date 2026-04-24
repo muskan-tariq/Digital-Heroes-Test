@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { supabase, type Score } from '../../lib/supabase'
-import { Plus, Trash2, Edit3, Loader, AlertCircle, CheckCircle } from 'lucide-react'
+import { Plus, Trash2, Edit3, Loader, AlertCircle, CheckCircle, Zap } from 'lucide-react'
 import { format } from 'date-fns'
 
 const MAX_SCORES = 5
@@ -116,7 +117,27 @@ export default function ScoreEntry() {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in" style={{ position: 'relative' }}>
+      {/* Access Control Overlay */}
+      {profile?.sub_status !== 'active' && (
+        <div style={{ 
+          position: 'absolute', inset: -20, background: 'rgba(5, 8, 17, 0.7)', 
+          backdropFilter: 'blur(8px)', zIndex: 10, borderRadius: 'var(--radius-lg)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-xl)'
+        }}>
+          <div className="card" style={{ maxWidth: 400, textAlign: 'center', border: '1px solid rgba(255,215,0,0.3)' }}>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(255,215,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <Zap size={30} color="var(--color-gold)" />
+            </div>
+            <h2 className="heading-sm">Subscription Required</h2>
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 8, marginBottom: 24 }}>
+              You need an active subscription to log scores and enter monthly prize draws.
+            </p>
+            <Link to="/subscribe" className="btn btn-primary" style={{ width: '100%' }}>Subscribe Now</Link>
+          </div>
+        </div>
+      )}
+
       <div className="page-header">
         <h1>My Golf Scores</h1>
         <p>Enter your Stableford scores (1–45). Only your latest 5 are kept.</p>

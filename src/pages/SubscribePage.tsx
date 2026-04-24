@@ -43,6 +43,8 @@ export default function SubscribePage() {
   const [selected, setSelected] = useState<'monthly' | 'yearly'>('yearly')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showCheckout, setShowCheckout] = useState(false)
+  const [cardData, setCardData] = useState({ number: '', expiry: '', cvc: '' })
   const navigate = useNavigate()
 
   const handleSubscribe = async () => {
@@ -52,10 +54,11 @@ export default function SubscribePage() {
     const { addNotification } = useNotificationStore.getState()
 
     try {
-      // Mock Stripe integration: simulate a checkout session
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Step 1: Show Stripe Simulation Overlay
+      setShowCheckout(true)
+      await new Promise(resolve => setTimeout(resolve, 2000)) // Processing state
 
-      // Simulate payment success — update subscription in DB
+      // Step 2: Finalize in DB
       const renewalDate = new Date()
       if (selected === 'monthly') {
         renewalDate.setMonth(renewalDate.getMonth() + 1)
@@ -75,10 +78,12 @@ export default function SubscribePage() {
       if (dbError) throw dbError
 
       await fetchProfile(user.id)
-      addNotification('subscription', 'Subscription Activated!', `Your ${selected} plan is now active. You're entered into the next monthly draw!`)
+      addNotification('subscription', 'Subscription Activated!', `Your ${selected} plan is now active. You're entered into the next monthly draw!`, ['app', 'email'])
+      setShowCheckout(false)
       navigate('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Payment failed. Please try again.')
+      setShowCheckout(false)
     } finally {
       setLoading(false)
     }
@@ -88,6 +93,40 @@ export default function SubscribePage() {
     <div style={{ minHeight: '100vh', background: 'var(--gradient-hero)', padding: 'var(--space-4xl) 0', position: 'relative', overflow: 'hidden' }}>
       <div className="orb orb-primary" style={{ width: 500, height: 500, top: -100, left: -100 }} />
       <div className="orb orb-secondary" style={{ width: 400, height: 400, bottom: 0, right: -100 }} />
+
+      {showCheckout && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(5, 8, 17, 0.9)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 400, background: '#fff', color: '#333' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, color: 'var(--color-primary)' }}>
+              <CreditCard size={24} />
+              <div style={{ fontWeight: 800, fontSize: '1.2rem' }}>Stripe <span style={{ fontWeight: 400, color: '#666' }}>Checkout</span></div>
+            </div>
+            
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: 4 }}>Pay Digital Heroes</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800 }}>{selected === 'monthly' ? '£9.99' : '£89.99'}</div>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 16 }}>
+              <label className="form-label" style={{ color: '#666' }}>Card Information</label>
+              <div style={{ border: '1px solid #ddd', borderRadius: 4, padding: 12, background: '#f9f9f9' }}>
+                <input disabled style={{ width: '100%', border: 'none', background: 'transparent', fontSize: '1rem', color: '#333' }} placeholder="4242 4242 4242 4242" />
+                <div style={{ display: 'flex', gap: 10, marginTop: 10, borderTop: '1px solid #eee', paddingTop: 10 }}>
+                  <input disabled style={{ width: '60%', border: 'none', background: 'transparent' }} placeholder="MM / YY" />
+                  <input disabled style={{ width: '40%', border: 'none', background: 'transparent' }} placeholder="CVC" />
+                </div>
+              </div>
+            </div>
+
+            <button className="btn btn-primary" style={{ width: '100%', padding: '12px', background: '#635bff', borderColor: '#635bff' }} disabled>
+              <Loader size={18} className="animate-spin" />
+            </button>
+            <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#999', marginTop: 12 }}>
+              Securely processing via Stripe...
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="container-md" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: 'var(--space-3xl)' }}>

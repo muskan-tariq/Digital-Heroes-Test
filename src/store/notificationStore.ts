@@ -9,11 +9,12 @@ export interface AppNotification {
   message: string
   read: boolean
   createdAt: string
+  channels: ('app' | 'email')[]
 }
 
 interface NotificationStore {
   notifications: AppNotification[]
-  addNotification: (type: NotificationType, title: string, message: string) => void
+  addNotification: (type: NotificationType, title: string, message: string, channels?: ('app' | 'email')[]) => void
   markRead: (id: string) => void
   markAllRead: () => void
   clearAll: () => void
@@ -29,6 +30,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       message: 'The April 2025 draw has been published. Check if you won!',
       read: false,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+      channels: ['app', 'email']
     },
     {
       id: '2',
@@ -37,6 +39,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       message: 'Your subscription is active. Good luck in the next draw!',
       read: false,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      channels: ['app', 'email']
     },
     {
       id: '3',
@@ -45,10 +48,11 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       message: 'Subscribe, log your scores, and make an impact. Check out the charities page.',
       read: true,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+      channels: ['app']
     },
   ],
 
-  addNotification: (type, title, message) => {
+  addNotification: (type, title, message, channels = ['app']) => {
     const newNotif: AppNotification = {
       id: Date.now().toString(),
       type,
@@ -56,6 +60,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       message,
       read: false,
       createdAt: new Date().toISOString(),
+      channels
     }
     set(state => ({ notifications: [newNotif, ...state.notifications] }))
   },

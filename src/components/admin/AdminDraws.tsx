@@ -189,7 +189,7 @@ export default function AdminDraws() {
 
       setSimResults(null)
       fetchData()
-      addNotification('draw', 'Draw Results Published!', `The ${currentMonth} draw has been published. Players can now check their results.`)
+      addNotification('draw', 'Draw Results Published!', `The ${currentMonth} draw has been published. Players can now check their results.`, ['app', 'email'])
       alert('Draw results published successfully!')
     } catch (err: any) {
       alert('Error publishing draw: ' + err.message)

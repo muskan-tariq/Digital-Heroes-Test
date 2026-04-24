@@ -9,31 +9,57 @@ export default function AdminAnalytics() {
     totalPoolEver: 0,
     charityTotal: 0,
     averageCharityPercentage: 0,
+    retentionRate: 0,
+    jackpotGrowth: 0,
+    scoreFrequency: 0,
+    history: [] as { month: string, pool: number }[]
   })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
-      // Users
+      // 1. User Stats
       const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
       const { count: activeCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('sub_status', 'active')
       
-      // Charity Ave
+      // 2. Charity Data
       const { data: profiles } = await supabase.from('profiles').select('charity_percentage')
       const avgPerc = profiles && profiles.length > 0 
         ? profiles.reduce((sum, p) => sum + (p.charity_percentage || 0), 0) / profiles.length 
         : 0
 
-      // Totals
-      const { data: draws } = await supabase.from('draws').select('total_pool')
+      // 3. Draw Data & History
+      const { data: draws } = await supabase.from('draws').select('*').order('executed_at', { ascending: false })
       const totalPool = (draws ?? []).reduce((sum, d) => sum + (d.total_pool || 0), 0)
+      
+      // 4. Growth Calculation
+      let growth = 0
+      if (draws && draws.length >= 2) {
+        const last = draws[0].total_pool || 0
+        const prev = draws[1].total_pool || 0
+        growth = prev > 0 ? ((last - prev) / prev) * 100 : 0
+      }
+
+      // 5. Score Frequency (Total Scores / Total Users)
+      const { count: totalScores } = await supabase.from('scores').select('*', { count: 'exact', head: true })
+      const scoreFreq = (userCount && userCount > 0) ? (totalScores || 0) / userCount : 0
+
+      // 6. Format History for Chart (Last 6 draws)
+      const history = (draws ?? []).slice(0, 6).reverse().map(d => ({
+        month: d.month.split('-')[1], // Just the month number
+        pool: d.total_pool
+      }))
 
       setStats({
         totalUsers: userCount || 0,
         activeSubs: activeCount || 0,
         totalPoolEver: totalPool,
-        charityTotal: totalPool * 0.1, // Minimal assumption
-        averageCharityPercentage: avgPerc
+        charityTotal: totalPool * 0.1, 
+        averageCharityPercentage: avgPerc,
+        retentionRate: userCount ? (activeCount || 0) / userCount * 100 : 0,
+        jackpotGrowth: growth,
+        scoreFrequency: scoreFreq,
+        history
       })
       setLoading(false)
     }
@@ -45,6 +71,8 @@ export default function AdminAnalytics() {
       <Loader className="animate-spin" size={40} style={{ margin: 'auto' }} />
     </div>
   )
+
+  const maxPool = Math.max(...stats.history.map(h => h.pool), 10)
 
   return (
     <div className="animate-fade-in">
@@ -91,37 +119,54 @@ export default function AdminAnalytics() {
 
       <div className="grid-2">
         <div className="card">
-          <h2 className="heading-sm" style={{ marginBottom: 'var(--space-lg)' }}>Participation Rates</h2>
-          <div style={{ height: 200, display: 'flex', alignItems: 'flex-end', gap: 20, padding: '0 20px' }}>
-            {/* Mock Chart */}
-            {[40, 70, 45, 90, 65, 80].map((h, i) => (
-              <div key={i} style={{ flex: 1, background: 'var(--gradient-primary)', height: `${h}%`, borderRadius: '4px 4px 0 0', opacity: 0.8 }} />
-            ))}
-          </div>
-          <div className="flex-between" style={{ marginTop: 10, color: 'var(--color-text-muted)', fontSize: '0.7rem' }}>
-            <span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
-          </div>
+          <h2 className="heading-sm" style={{ marginBottom: 'var(--space-lg)' }}>Participation (Pool Size)</h2>
+          {stats.history.length === 0 ? (
+            <div className="empty-state" style={{ height: 200 }}>
+                <p style={{ fontSize: '0.8rem' }}>No draw history yet.</p>
+            </div>
+          ) : (
+            <>
+              <div style={{ height: 200, display: 'flex', alignItems: 'flex-end', gap: 20, padding: '0 20px' }}>
+                {stats.history.map((h, i) => (
+                  <div key={i} title={`£${h.pool}`} style={{ 
+                    flex: 1, 
+                    background: 'var(--gradient-primary)', 
+                    height: `${(h.pool / maxPool) * 100}%`, 
+                    borderRadius: '4px 4px 0 0', 
+                    opacity: 0.8,
+                    minHeight: 10
+                  }} />
+                ))}
+              </div>
+              <div className="flex-between" style={{ marginTop: 10, color: 'var(--color-text-muted)', fontSize: '0.7rem' }}>
+                {stats.history.map((h, i) => <span key={i}>Month {h.month}</span>)}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="card">
           <h2 className="heading-sm" style={{ marginBottom: 'var(--space-lg)' }}>Growth Indicators</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="flex-between">
-              <span style={{ fontSize: '0.85rem' }}>Subscriber Retention</span>
-              <span style={{ fontWeight: 700 }}>94%</span>
+              <span style={{ fontSize: '0.85rem' }}>User Retention</span>
+              <span style={{ fontWeight: 700 }}>{stats.retentionRate.toFixed(0)}%</span>
             </div>
-            <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{ width: '94%' }} /></div>
+            <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{ width: `${stats.retentionRate}%` }} /></div>
             
             <div className="flex-between">
-              <span style={{ fontSize: '0.85rem' }}>Score Entry Frequency</span>
-              <span style={{ fontWeight: 700 }}>4.2 / week</span>
+              <span style={{ fontSize: '0.85rem' }}>Avg. Scores Per User</span>
+              <span style={{ fontWeight: 700 }}>{stats.scoreFrequency.toFixed(1)} total</span>
             </div>
-            <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{ width: '80%', background: 'var(--color-secondary)' }} /></div>
+            <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{ width: `${Math.min(stats.scoreFrequency * 20, 100)}%`, background: 'var(--color-secondary)' }} /></div>
 
             <div className="flex-between">
               <span style={{ fontSize: '0.85rem' }}>Monthly Jackpot Growth</span>
-              <span style={{ fontWeight: 700 }}>+12%</span>
+              <span style={{ fontWeight: 700, color: stats.jackpotGrowth >= 0 ? 'var(--color-green)' : 'var(--color-red)' }}>
+                {stats.jackpotGrowth >= 0 ? '+' : ''}{stats.jackpotGrowth.toFixed(1)}%
+              </span>
             </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Comparing last two published draws</div>
           </div>
         </div>
       </div>

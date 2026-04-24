@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { supabase, type Score, type Charity, type Draw, type UserDraw } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
-import { Target, Heart, Trophy, TrendingUp, ArrowRight } from 'lucide-react'
+import { Target, Heart, Trophy, TrendingUp, ArrowRight, AlertCircle } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function UserOverview() {
@@ -65,6 +65,16 @@ export default function UserOverview() {
   const charityContrib = profile && profile.sub_status === 'active'
     ? ((9.99 * (profile.charity_percentage / 100))).toFixed(2) : '0.00'
 
+  const handleCancel = async () => {
+    if (!confirm('Are you sure you want to cancel? You will lose access at the end of your billing cycle.')) return
+    const { error } = await supabase.from('profiles').update({ sub_status: 'inactive' }).eq('id', profile?.id)
+    if (!error) window.location.reload()
+  }
+
+  const handleRenew = () => {
+    window.location.href = '/subscribe'
+  }
+
   return (
     <div className="animate-fade-in">
       <div className="page-header">
@@ -72,22 +82,32 @@ export default function UserOverview() {
         <p>{profile?.email}</p>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid-4" style={{ marginBottom: 'var(--space-2xl)' }}>
-        <div className="card-stat card-gradient">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(101,88,245,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <TrendingUp size={16} color="var(--color-primary-light)" />
+      {/* Subscription Management Banner */}
+      {profile?.sub_status !== 'active' ? (
+        <div className="alert alert-error" style={{ marginBottom: 'var(--space-2xl)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <AlertCircle size={24} />
+            <div>
+              <div style={{ fontWeight: 700 }}>Subscription Lapsed</div>
+              <div style={{ fontSize: '0.85rem' }}>Your access is restricted. Renew to continue playing.</div>
             </div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subscription</span>
           </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, textTransform: 'capitalize' }}
-            className={profile?.sub_status === 'active' ? 'text-gradient' : ''}>
-            {profile?.sub_status ?? 'inactive'}
-          </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: 4 }}>Renews {renewalDate}</div>
+          <button onClick={handleRenew} className="btn btn-primary btn-sm">Renew Now</button>
         </div>
+      ) : (
+        <div className="card" style={{ marginBottom: 'var(--space-2xl)', background: 'var(--gradient-primary)', color: 'white', padding: '16px 24px' }}>
+          <div className="flex-between">
+            <div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Active Membership</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>Renews on {renewalDate}</div>
+            </div>
+            <button onClick={handleCancel} className="btn btn-ghost btn-sm" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}>Cancel Plan</button>
+          </div>
+        </div>
+      )}
 
+      {/* Stat Cards */}
+      <div className="grid-3" style={{ marginBottom: 'var(--space-2xl)' }}>
         <div className="card-stat">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(0,229,160,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

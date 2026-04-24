@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Bell, Check, Trophy, Zap, CreditCard, Info } from 'lucide-react'
+import { Bell, Check, Trophy, Zap, CreditCard, Info, Mail } from 'lucide-react'
 import { useNotificationStore, type AppNotification } from '../../store/notificationStore'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -95,8 +95,15 @@ export default function NotificationBell() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: n.read ? 500 : 700, fontSize: '0.85rem', marginBottom: 2 }}>{n.title}</div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>{n.message}</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
-                    {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
+                      {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                    </div>
+                    {n.channels.includes('email') && (
+                      <div title="Sent via Email" style={{ display: 'flex', alignItems: 'center', gap: 2, fontSize: '0.65rem', color: 'var(--color-primary-light)', fontWeight: 600 }}>
+                        <Mail size={10} /> Email Sent
+                      </div>
+                    )}
                   </div>
                 </div>
                 {!n.read && <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-primary)', flexShrink: 0, marginTop: 6 }} />}
