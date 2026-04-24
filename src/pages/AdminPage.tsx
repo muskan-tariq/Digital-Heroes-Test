@@ -69,10 +69,6 @@ export default function AdminPage({ sidebarOpen, setSidebarOpen }: AdminPageProp
               </Link>
             )
           })}
-          <div className="sidebar-section-label" style={{ marginTop: 'var(--space-lg)' }}>Player View</div>
-          <Link to="/dashboard" className="sidebar-nav-item" onClick={() => setSidebarOpen(false)}>
-            <LayoutDashboard size={18} /> My Dashboard
-          </Link>
         </nav>
 
         <div style={{ padding: 'var(--space-md)', borderTop: '1px solid var(--color-border)' }}>

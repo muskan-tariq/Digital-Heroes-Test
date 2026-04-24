@@ -71,14 +71,6 @@ export default function DashboardPage({ sidebarOpen, setSidebarOpen }: Dashboard
             )
           })}
 
-          {profile?.role === 'admin' && (
-            <>
-              <div className="sidebar-section-label" style={{ marginTop: 'var(--space-lg)' }}>Admin</div>
-              <Link to="/admin" className="sidebar-nav-item" onClick={() => setSidebarOpen(false)}>
-                <Users size={18} /> Admin Panel
-              </Link>
-            </>
-          )}
         </nav>
 
         <div style={{ padding: 'var(--space-md)', borderTop: '1px solid var(--color-border)' }}>

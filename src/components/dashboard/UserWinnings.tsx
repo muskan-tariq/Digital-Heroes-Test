@@ -38,6 +38,47 @@ export default function UserWinnings() {
 
   useEffect(() => { fetchWinnings() }, [profile])
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, drawId: string) => {
+    const file = e.target.files?.[0]
+    if (!file || !profile) return
+
+    setSubmitting(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${profile.id}/${drawId}-${Math.random()}.${fileExt}`
+      
+      // Upload to Supabase Storage
+      const { data, error: uploadError } = await supabase.storage
+        .from('payout-proofs')
+        .upload(fileName, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('payout-proofs')
+        .getPublicUrl(data.path)
+
+      // Insert into verifications
+      const { error: insertError } = await supabase.from('verifications').insert({
+        user_id: profile.id,
+        draw_id: drawId,
+        proof_url: publicUrl,
+        status: 'pending',
+      })
+
+      if (insertError) throw insertError
+
+      setMsg({ type: 'success', text: 'Proof uploaded and submitted!' })
+      await fetchWinnings()
+    } catch (error: any) {
+      setMsg({ type: 'error', text: 'Upload failed: ' + error.message })
+    } finally {
+      setSubmitting(false)
+      setUploadId(null)
+    }
+    setTimeout(() => setMsg(null), 4000)
+  }
+
   const submitVerification = async (drawId: string) => {
     if (!profile || !proofUrl.trim()) return
     setSubmitting(true)
@@ -143,8 +184,26 @@ export default function UserWinnings() {
 
                   {uploadId === w.id && (
                     <div style={{ marginTop: 12 }}>
+                      <div className="form-group" style={{ marginBottom: 16 }}>
+                        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <ImageIcon size={14} /> Upload Screenshot
+                        </label>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={(e) => handleFileUpload(e, w.draw_id)}
+                          disabled={submitting}
+                          style={{ fontSize: '0.8rem' }}
+                        />
+                      </div>
+                      
+                      <div style={{ position: 'relative', textAlign: 'center', marginBottom: 16 }}>
+                        <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)' }} />
+                        <span style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-surface)', padding: '0 8px', fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>OR USE URL</span>
+                      </div>
+
                       <div className="form-group" style={{ marginBottom: 10 }}>
-                        <label className="form-label">Screenshot URL (from your golf platform)</label>
+                        <label className="form-label">Screenshot URL</label>
                         <input className="form-input" type="url"
                           placeholder="https://your-golf-platform/score-screenshot.png"
                           value={proofUrl} onChange={e => setProofUrl(e.target.value)} />
@@ -152,7 +211,7 @@ export default function UserWinnings() {
                       <div style={{ display: 'flex', gap: 8 }}>
                         <button onClick={() => submitVerification(w.draw_id)} disabled={submitting || !proofUrl.trim()}
                           className="btn btn-primary btn-sm">
-                          {submitting ? <Loader size={14} className="animate-spin" /> : <><Upload size={14} /> Submit</>}
+                          {submitting ? <Loader size={14} className="animate-spin" /> : <><Upload size={14} /> Submit URL</>}
                         </button>
                         <button onClick={() => { setUploadId(null); setProofUrl('') }} className="btn btn-ghost btn-sm">Cancel</button>
                       </div>
