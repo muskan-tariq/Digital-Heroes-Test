@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { supabase, type Score, type Charity, type Draw, type UserDraw } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
-import { Target, Heart, Trophy, TrendingUp, ArrowRight, AlertCircle } from 'lucide-react'
+import { Target, Heart, Trophy, ArrowRight, AlertCircle } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function UserOverview() {

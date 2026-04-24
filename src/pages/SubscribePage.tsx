@@ -44,7 +44,6 @@ export default function SubscribePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showCheckout, setShowCheckout] = useState(false)
-  const [cardData, setCardData] = useState({ number: '', expiry: '', cvc: '' })
   const navigate = useNavigate()
 
   const handleSubscribe = async () => {
