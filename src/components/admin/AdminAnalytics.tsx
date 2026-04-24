@@ -130,10 +130,14 @@ export default function AdminAnalytics() {
             </div>
           ) : (
             <>
-              <div style={{ height: 200, display: 'flex', alignItems: 'flex-end', gap: 20, padding: '0 20px' }}>
+              <div style={{ 
+                height: 200, display: 'flex', alignItems: 'flex-end', 
+                gap: '8px', padding: '0 10px', 
+                overflowX: 'auto', paddingBottom: '10px'
+              }}>
                 {stats.history.map((h, i) => (
                   <div key={i} title={`£${h.pool}`} style={{ 
-                    flex: 1, 
+                    flex: '1 0 30px', 
                     background: 'var(--gradient-primary)', 
                     height: `${(h.pool / maxPool) * 100}%`, 
                     borderRadius: '4px 4px 0 0', 
@@ -142,8 +146,8 @@ export default function AdminAnalytics() {
                   }} />
                 ))}
               </div>
-              <div className="flex-between" style={{ marginTop: 10, color: 'var(--color-text-muted)', fontSize: '0.65rem' }}>
-                {stats.history.map((h, i) => <span key={i} style={{ flex: 1, textAlign: 'center' }}>{h.month}</span>)}
+              <div className="flex-between" style={{ marginTop: 10, color: 'var(--color-text-muted)', fontSize: '0.65rem', overflowX: 'auto', gap: '8px', padding: '0 10px' }}>
+                {stats.history.map((h, i) => <span key={i} style={{ flex: '1 0 30px', textAlign: 'center' }}>{h.month}</span>)}
               </div>
             </>
           )}

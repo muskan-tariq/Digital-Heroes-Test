@@ -77,20 +77,6 @@ export default function AdminEmails() {
         </div>
       </div>
 
-      <div style={{ marginTop: 'var(--space-xl)', padding: 'var(--space-lg)', background: 'rgba(101,88,245,0.05)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-primary)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-            <Mail size={20} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 700 }}>SMTP Simulation Mode Active</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-              In a production environment, these would be routed via SendGrid or AWS SES. For this demonstration, they are captured in this sandbox.
-            </div>
-          </div>
-          <button className="btn btn-primary btn-sm" style={{ marginLeft: 'auto' }}>Configure SMTP <ArrowRight size={14} /></button>
-        </div>
-      </div>
     </div>
   )
 }
