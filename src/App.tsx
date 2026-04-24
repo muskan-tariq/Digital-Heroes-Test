@@ -84,12 +84,12 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/charities" element={<CharitiesPage />} />
-        <Route path="/auth" element={!user ? <AuthPage /> : <Navigate to="/dashboard" />} />
+        <Route path="/auth" element={!user ? <AuthPage /> : (isAdmin ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />)} />
         <Route path="/subscribe" element={
-          user ? (isActive ? <Navigate to="/dashboard" /> : <SubscribePage />) : <Navigate to="/auth" />
+          user ? (isActive ? (isAdmin ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />) : <SubscribePage />) : <Navigate to="/auth" />
         } />
         <Route path="/dashboard/*" element={
-          user ? <DashboardPage sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          user ? (isAdmin ? <Navigate to="/admin" /> : <DashboardPage sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />)
             : <Navigate to="/auth" />
         } />
         <Route path="/admin/*" element={
