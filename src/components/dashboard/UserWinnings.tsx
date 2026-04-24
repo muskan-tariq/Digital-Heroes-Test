@@ -45,14 +45,19 @@ export default function UserWinnings() {
     setSubmitting(true)
     try {
       const fileExt = file.name.split('.').pop()
-      const fileName = `${profile.id}/${drawId}-${Math.random()}.${fileExt}`
+      const fileName = `${profile.id}/${Date.now()}.${fileExt}`
       
       // Upload to Supabase Storage
       const { data, error: uploadError } = await supabase.storage
         .from('payout-proofs')
         .upload(fileName, file, { upsert: true })
 
-      if (uploadError) throw uploadError
+      if (uploadError) {
+        if (uploadError.message.includes('row-level security')) {
+          throw new Error('RLS Policy Error: Please ensure your "payout-proofs" bucket has a policy allowing "authenticated" users to "Insert" files.')
+        }
+        throw uploadError
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('payout-proofs')
@@ -71,7 +76,7 @@ export default function UserWinnings() {
       setMsg({ type: 'success', text: 'Proof uploaded and submitted!' })
       await fetchWinnings()
     } catch (error: any) {
-      setMsg({ type: 'error', text: 'Upload failed: ' + error.message })
+      setMsg({ type: 'error', text: error.message })
     } finally {
       setSubmitting(false)
       setUploadId(null)

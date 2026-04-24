@@ -59,7 +59,7 @@ export default function HomePage() {
       if (winData) setRecentWinners(winData)
 
       // 3. Platform Stats
-      const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+      const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('sub_status', 'active')
       const { count: cCount } = await supabase.from('charities').select('*', { count: 'exact', head: true })
       const { data: drawData } = await supabase.from('draws').select('total_pool')
       const pTotal = (drawData ?? []).reduce((sum, d) => sum + (d.total_pool || 0), 0)

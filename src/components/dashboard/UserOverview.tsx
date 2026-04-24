@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { supabase, type Score, type Charity, type Draw, type UserDraw } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
-import { Target, Heart, Trophy, ArrowRight, AlertCircle } from 'lucide-react'
+import { Target, Heart, Trophy, ArrowRight, AlertCircle, CreditCard } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function UserOverview() {
@@ -75,6 +75,8 @@ export default function UserOverview() {
     window.location.href = '/subscribe'
   }
 
+  const [showMemberDetails, setShowMemberDetails] = useState(false)
+
   return (
     <div className="animate-fade-in">
       <div className="page-header">
@@ -82,8 +84,8 @@ export default function UserOverview() {
         <p>{profile?.email}</p>
       </div>
 
-      {/* Subscription Management Banner */}
-      {profile?.sub_status !== 'active' ? (
+      {/* Subscription Lapsed Alert (Only for previously active users) */}
+      {(profile?.sub_status === 'inactive' || profile?.sub_status === 'past_due' || profile?.sub_status === 'canceled') && (
         <div className="alert alert-error" style={{ marginBottom: 'var(--space-2xl)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <AlertCircle size={24} />
@@ -93,16 +95,6 @@ export default function UserOverview() {
             </div>
           </div>
           <button onClick={handleRenew} className="btn btn-primary btn-sm">Renew Now</button>
-        </div>
-      ) : (
-        <div className="card" style={{ marginBottom: 'var(--space-2xl)', background: 'var(--gradient-primary)', color: 'white', padding: '16px 24px' }}>
-          <div className="flex-between">
-            <div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Active Membership</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>Renews on {renewalDate}</div>
-            </div>
-            <button onClick={handleCancel} className="btn btn-ghost btn-sm" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}>Cancel Plan</button>
-          </div>
         </div>
       )}
 
@@ -222,6 +214,43 @@ export default function UserOverview() {
             ) : (
               <div>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>No published draws yet</p>
+              </div>
+            )}
+          </div>
+
+          {/* Membership Details */}
+          <div className="card" style={{ border: '1px dashed var(--color-border)' }}>
+            <div className="flex-between">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CreditCard size={16} />
+                </div>
+                <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Membership Details</span>
+              </div>
+              <button onClick={() => setShowMemberDetails(!showMemberDetails)} className="btn btn-ghost btn-sm">
+                {showMemberDetails ? 'Hide' : 'View'}
+              </button>
+            </div>
+            
+            {showMemberDetails && (
+              <div className="animate-fade-in" style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div className="flex-between">
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Status</span>
+                    <span className={`badge ${profile?.sub_status === 'active' ? 'badge-green' : 'badge-red'}`} style={{ textTransform: 'capitalize' }}>
+                      {profile?.sub_status}
+                    </span>
+                  </div>
+                  <div className="flex-between">
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Renewal Date</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{renewalDate}</span>
+                  </div>
+                  {profile?.sub_status === 'active' ? (
+                    <button onClick={handleCancel} className="btn btn-secondary btn-sm" style={{ width: '100%', marginTop: 8 }}>Cancel Plan</button>
+                  ) : (
+                    <button onClick={handleRenew} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: 8 }}>Renew Now</button>
+                  )}
+                </div>
               </div>
             )}
           </div>

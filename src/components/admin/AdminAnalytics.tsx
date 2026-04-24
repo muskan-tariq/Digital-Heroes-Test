@@ -44,11 +44,15 @@ export default function AdminAnalytics() {
       const { count: totalScores } = await supabase.from('scores').select('*', { count: 'exact', head: true })
       const scoreFreq = (userCount && userCount > 0) ? (totalScores || 0) / userCount : 0
 
-      // 6. Format History for Chart (Last 6 draws)
-      const history = (draws ?? []).slice(0, 6).reverse().map(d => ({
-        month: d.month.split('-')[1], // Just the month number
-        pool: d.total_pool
-      }))
+      // 6. Format History for Chart (Last 12 draws)
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      const history = (draws ?? []).slice(0, 12).reverse().map(d => {
+        const monthNum = parseInt(d.month.split('-')[1])
+        return {
+          month: monthNames[monthNum - 1],
+          pool: d.total_pool
+        }
+      })
 
       setStats({
         totalUsers: userCount || 0,
@@ -138,8 +142,8 @@ export default function AdminAnalytics() {
                   }} />
                 ))}
               </div>
-              <div className="flex-between" style={{ marginTop: 10, color: 'var(--color-text-muted)', fontSize: '0.7rem' }}>
-                {stats.history.map((h, i) => <span key={i}>Month {h.month}</span>)}
+              <div className="flex-between" style={{ marginTop: 10, color: 'var(--color-text-muted)', fontSize: '0.65rem' }}>
+                {stats.history.map((h, i) => <span key={i} style={{ flex: 1, textAlign: 'center' }}>{h.month}</span>)}
               </div>
             </>
           )}
