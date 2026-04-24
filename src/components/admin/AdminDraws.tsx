@@ -69,19 +69,30 @@ export default function AdminDraws() {
         if (!winningNumbers.includes(num)) winningNumbers.push(num)
       }
     } else {
-      // Algorithmic: Weighted Random (Higher frequency = Higher chance)
-      const pool: number[] = Object.values(userScores).flat()
+      // Algorithmic: Guaranteed Winner Method
+      // To ensure "some player must win", we pick a random active user 
+      // and use their current scores as the winning set.
+      const userIds = Object.keys(userScores).filter(id => userScores[id].length > 0)
       
-      while (winningNumbers.length < 5) {
-        // Only pick from scores that haven't been selected yet
-        const availableInPool = pool.filter(n => !winningNumbers.includes(n))
+      if (userIds.length > 0) {
+        const luckyUserId = userIds[Math.floor(Math.random() * userIds.length)]
+        const userNumbers = [...userScores[luckyUserId]]
         
-        if (availableInPool.length > 0) {
-          // Pick randomly from the pool (weighted by frequency)
-          const picked = availableInPool[Math.floor(Math.random() * availableInPool.length)]
-          winningNumbers.push(picked)
-        } else {
-          // Fallback to pure random if pool is exhausted or empty
+        // Take up to 5 unique numbers from this user
+        const uniqueUserNumbers = [...new Set(userNumbers)]
+        winningNumbers = uniqueUserNumbers.slice(0, 5)
+        
+        // If they have fewer than 5 unique scores, pad with random ones
+        while (winningNumbers.length < 5) {
+          const num = Math.floor(Math.random() * 45) + 1
+          if (!winningNumbers.includes(num)) winningNumbers.push(num)
+        }
+        
+        // Shuffle for randomness
+        winningNumbers.sort(() => Math.random() - 0.5)
+      } else {
+        // Fallback to random if no users have scores
+        while (winningNumbers.length < 5) {
           const num = Math.floor(Math.random() * 45) + 1
           if (!winningNumbers.includes(num)) winningNumbers.push(num)
         }
