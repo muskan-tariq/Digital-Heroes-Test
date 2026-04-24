@@ -213,10 +213,10 @@ export default function AdminUsers() {
                   <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '12px' }}>No scores yet</p>
                 ) : (
                   editScores.map(s => (
-                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-sm)' }}>
-                      <div className="number-ball number-ball-primary" style={{ width: 38, height: 38, fontSize: '0.9rem' }}>{s.score}</div>
-                      <div style={{ flex: 1, fontSize: '0.85rem' }}>{format(new Date(s.date + 'T00:00:00'), 'd MMM yyyy')}</div>
-                      <button onClick={() => deleteScore(s.id)} className="btn btn-ghost btn-sm"><Trash2 size={13} color="var(--color-accent)" /></button>
+                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-sm)', flexWrap: 'wrap' }}>
+                      <div className="number-ball number-ball-primary" style={{ width: 34, height: 34, fontSize: '0.85rem', flexShrink: 0 }}>{s.score}</div>
+                      <div style={{ flex: '1 1 100px', fontSize: '0.8rem', minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{format(new Date(s.date + 'T00:00:00'), 'd MMM yyyy')}</div>
+                      <button onClick={() => deleteScore(s.id)} className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }}><Trash2 size={13} color="var(--color-accent)" /></button>
                     </div>
                   ))
                 )}

@@ -150,13 +150,13 @@ export default function UserOverview() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {scores.map((s, i) => (
-                <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius-md)' }}>
-                  <div className="number-ball number-ball-primary" style={{ width: 38, height: 38, fontSize: '0.9rem' }}>{s.score}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{format(new Date(s.date + 'T00:00:00'), 'd MMM yyyy')}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Stableford score</div>
+                <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
+                  <div className="number-ball number-ball-primary" style={{ width: 34, height: 34, fontSize: '0.85rem', flexShrink: 0 }}>{s.score}</div>
+                  <div style={{ flex: '1 1 100px', minWidth: 0 }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{format(new Date(s.date + 'T00:00:00'), 'd MMM yyyy')}</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Stableford score</div>
                   </div>
-                  {i === 0 && <span className="badge badge-green" style={{ fontSize: '0.7rem' }}>Latest</span>}
+                  {i === 0 && <span className="badge badge-green" style={{ fontSize: '0.65rem', marginLeft: 'auto' }}>Latest</span>}
                 </div>
               ))}
             </div>

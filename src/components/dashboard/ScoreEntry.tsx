@@ -218,31 +218,34 @@ export default function ScoreEntry() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {scores.map((s, i) => (
-              <div key={s.id} style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '14px 16px',
+              <div key={s.id} className="score-item" style={{
+                display: 'flex', alignItems: 'center', gap: 'var(--space-md)',
+                padding: '12px 14px',
                 background: editId === s.id ? 'rgba(101,88,245,0.08)' : 'rgba(255,255,255,0.03)',
                 borderRadius: 'var(--radius-md)',
                 border: editId === s.id ? '1px solid rgba(101,88,245,0.4)' : '1px solid transparent',
                 transition: 'all 0.2s ease',
+                flexWrap: 'wrap'
               }}>
-                <div className="number-ball number-ball-primary" style={{ width: 46, height: 46, fontSize: '1.1rem' }}>{s.score}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                <div className="number-ball number-ball-primary" style={{ width: 40, height: 40, fontSize: '1rem', flexShrink: 0 }}>{s.score}</div>
+                <div style={{ flex: '1 1 120px', minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {format(new Date(s.date + 'T00:00:00'), 'EEEE, d MMMM yyyy')}
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: 2 }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 2 }}>
                     Stableford · Entry #{scores.length - i}
                   </div>
                 </div>
-                {i === 0 && <span className="badge badge-green" style={{ fontSize: '0.7rem' }}>Latest</span>}
-                <div style={{ display: 'flex', gap: 6, marginLeft: 8 }}>
-                  <button onClick={() => handleEdit(s)} className="btn btn-ghost btn-sm" title="Edit">
-                    <Edit3 size={15} />
-                  </button>
-                  <button onClick={() => handleDelete(s.id)} className="btn btn-danger btn-sm" title="Delete">
-                    <Trash2 size={15} />
-                  </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+                  {i === 0 && <span className="badge badge-green" style={{ fontSize: '0.65rem' }}>Latest</span>}
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button onClick={() => handleEdit(s)} className="btn btn-ghost btn-sm" title="Edit">
+                      <Edit3 size={14} />
+                    </button>
+                    <button onClick={() => handleDelete(s.id)} className="btn btn-danger btn-sm" title="Delete">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
