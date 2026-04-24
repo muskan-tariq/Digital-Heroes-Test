@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { supabase, type UserDraw, type Draw, type Verification } from '../../lib/supabase'
-import { Trophy, Upload, Loader, CheckCircle, AlertCircle } from 'lucide-react'
+import { Trophy, Upload, Loader, CheckCircle, AlertCircle, Image as ImageIcon } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function UserWinnings() {
