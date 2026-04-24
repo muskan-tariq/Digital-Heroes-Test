@@ -69,17 +69,22 @@ export default function AdminDraws() {
         if (!winningNumbers.includes(num)) winningNumbers.push(num)
       }
     } else {
-      // Algorithmic: Weighted by most frequent scores
-      const freqMap: Record<number, number> = {}
-      Object.values(userScores).flat().forEach(s => {
-        freqMap[s] = (freqMap[s] || 0) + 1
-      })
-      const sorted = Object.keys(freqMap).map(Number).sort((a, b) => freqMap[b] - freqMap[a])
-      winningNumbers = sorted.slice(0, 5)
-      // Fill remaining if less than 5
-      while(winningNumbers.length < 5) {
-        const num = Math.floor(Math.random() * 45) + 1
-        if (!winningNumbers.includes(num)) winningNumbers.push(num)
+      // Algorithmic: Weighted Random (Higher frequency = Higher chance)
+      const pool: number[] = Object.values(userScores).flat()
+      
+      while (winningNumbers.length < 5) {
+        // Only pick from scores that haven't been selected yet
+        const availableInPool = pool.filter(n => !winningNumbers.includes(n))
+        
+        if (availableInPool.length > 0) {
+          // Pick randomly from the pool (weighted by frequency)
+          const picked = availableInPool[Math.floor(Math.random() * availableInPool.length)]
+          winningNumbers.push(picked)
+        } else {
+          // Fallback to pure random if pool is exhausted or empty
+          const num = Math.floor(Math.random() * 45) + 1
+          if (!winningNumbers.includes(num)) winningNumbers.push(num)
+        }
       }
     }
 
