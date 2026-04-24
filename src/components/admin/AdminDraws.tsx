@@ -161,6 +161,9 @@ export default function AdminDraws() {
         drawId = data.id
       }
 
+      // 1.5. Clean up existing entries for this draw to prevent duplicates
+      await supabase.from('user_draws').delete().eq('draw_id', drawId)
+
       // Record user entries/winners
       for (const [userId, scores] of Object.entries(userScores)) {
         const matches = scores.filter(s => simResults.winningNumbers.includes(s)).length

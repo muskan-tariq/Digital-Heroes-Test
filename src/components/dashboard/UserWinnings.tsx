@@ -20,9 +20,16 @@ export default function UserWinnings() {
 
     if (!entries) { setLoading(false); return }
 
-    const enriched = await Promise.all(entries.map(async (e) => {
-      const { data: draw } = await supabase.from('draws').select('*').eq('id', e.draw_id).single()
-      const { data: ver } = await supabase.from('verifications').select('*').eq('user_id', profile.id).eq('draw_id', e.draw_id).single()
+    const seenDraws = new Set<string>()
+    const uniqueEntries = entries.filter(e => {
+      if (seenDraws.has(e.draw_id)) return false
+      seenDraws.add(e.draw_id)
+      return true
+    })
+
+    const enriched = await Promise.all(uniqueEntries.map(async (e) => {
+      const { data: draw } = await supabase.from('draws').select('*').eq('id', e.draw_id).maybeSingle()
+      const { data: ver } = await supabase.from('verifications').select('*').eq('user_id', profile.id).eq('draw_id', e.draw_id).order('created_at', { ascending: false }).limit(1).maybeSingle()
       return { ...e, draw: draw ?? undefined, verification: ver ?? undefined }
     }))
     setWinnings(enriched)

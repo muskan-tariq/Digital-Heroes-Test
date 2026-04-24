@@ -21,7 +21,7 @@ export default function DrawResults() {
       const enriched = await Promise.all(
         drawsData.map(async (d) => {
           const { data: entry } = await supabase
-            .from('user_draws').select('*').eq('draw_id', d.id).eq('user_id', profile.id).single()
+            .from('user_draws').select('*').eq('draw_id', d.id).eq('user_id', profile.id).order('created_at', { ascending: false }).limit(1).maybeSingle()
           return { ...d, myEntry: entry ?? undefined }
         })
       )
